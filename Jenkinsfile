@@ -1,32 +1,25 @@
 pipeline {
-    agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Building the application...'
-                // Replace with your build command, e.g.,:
-                // sh 'npm install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                // Replace with your test command, e.g.,:
-                // sh 'npm test'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying the application...'
-                // Example: Docker build and run
-                sh '''
-                    docker build -t myapp .
-                    docker run -d -p 80:80 myapp
-                '''
-            }
-        }
+  agent any
+  stages {
+    stage('Build') {
+      steps {
+        sh 'mvn clean install'
+      }
     }
+    stage('Test') {
+      steps {
+        sh 'mvn test'
+      }
+    }
+    stage('Code Quality') {
+      steps {
+        sh 'sonar-scanner'
+      }
+    }
+    stage('Deploy') {
+      steps {
+        sh './deploy.sh'
+      }
+    }
+  }
 }
